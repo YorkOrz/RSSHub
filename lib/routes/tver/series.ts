@@ -44,7 +44,7 @@ async function handler(ctx: Context): Promise<Data> {
             ...commonHeaders,
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        referrer: 'https://s.tver.jp/',
+        referer: 'https://s.tver.jp/',
         credentials: 'omit',
         mode: 'cors',
     });
@@ -56,7 +56,7 @@ async function handler(ctx: Context): Promise<Data> {
         headers: {
             ...commonHeaders,
         },
-        referrer: 'https://tver.jp/',
+        referer: 'https://tver.jp/',
         credentials: 'omit',
         mode: 'cors',
     });
@@ -67,7 +67,7 @@ async function handler(ctx: Context): Promise<Data> {
             ...commonHeaders,
             'x-tver-platform-type': 'web',
         },
-        referrer: 'https://tver.jp/',
+        referer: 'https://tver.jp/',
         credentials: 'omit',
         mode: 'cors',
     });
@@ -77,7 +77,7 @@ async function handler(ctx: Context): Promise<Data> {
         .map((i) => {
             const rawPubDate = i.content.broadcastDateLabel;
             const cleanedPubDate = rawPubDate.replaceAll(/\(.*?\)|放送分/g, '').trim();
-            const parsedPubDate = timezone(parseDate(cleanedPubDate, 'M月D日'), +9).toDateString();
+            const parsedPubDate = timezone(parseDate(cleanedPubDate, 'M月D日'), 9).toDateString();
 
             return {
                 title: i.content.title,

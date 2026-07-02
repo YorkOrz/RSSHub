@@ -33,12 +33,14 @@ async function handler() {
     let sort = 0;
     let addtime = '';
 
-    for (let i = 0; i < data.data.album.length; i++) {
-        if (Number.parseInt(data.data.album[i].ds) === 1) {
-            sort = data.data.album[i].sort;
-            addtime = data.data.album[i].addtime;
-            break;
+    for (const album of data.data.album) {
+        if (Number.parseInt(album.ds) !== 1) {
+            continue;
         }
+
+        sort = album.sort;
+        addtime = album.addtime;
+        break;
     }
     const api = 'http://dili.bdatu.com/jiekou/albums/a' + sort + '.html';
     const response = await got(api);
@@ -50,7 +52,7 @@ async function handler() {
             title: item.title,
             link: item.url,
             description: `<img src="${item.url}"><br>` + item.content,
-            pubDate: timezone(parseDate(addtime), +0),
+            pubDate: timezone(parseDate(addtime), 0),
             guid: item.id,
         };
         out.push(info);

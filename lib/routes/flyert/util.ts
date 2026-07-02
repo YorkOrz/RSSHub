@@ -1,10 +1,9 @@
-import path from 'node:path';
-
 import type { CheerioAPI } from 'cheerio';
 
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
 import timezone from '@/utils/timezone';
+
+import { renderDescription } from './templates/description';
 
 const rootUrl = 'https://www.flyert.com.cn';
 
@@ -23,7 +22,7 @@ const parseArticleList = ($: CheerioAPI, limit: number) =>
 
             const title = item.find('div.wzbt').text().trim();
             const image = item.find('div.wzpic img').prop('src');
-            const description = art(path.join(__dirname, 'templates/description.art'), {
+            const description = renderDescription({
                 images: image
                     ? [
                           {
@@ -108,7 +107,7 @@ const parsePostList = ($: CheerioAPI, limit: number) =>
  */
 const parseArticle = ($$: CheerioAPI, item) => {
     const title = $$('h1.ph').text().trim();
-    const description = art(path.join(__dirname, 'templates/description.art'), {
+    const description = renderDescription({
         intro: $$('div.s').text() || undefined,
         description: $$('div#artMain').html(),
     });
@@ -123,7 +122,7 @@ const parseArticle = ($$: CheerioAPI, item) => {
 
     item.title = title;
     item.description = description;
-    item.pubDate = pubDate ? timezone(parseDate(pubDate), +8) : item.pubDate;
+    item.pubDate = pubDate ? timezone(parseDate(pubDate), 8) : item.pubDate;
     item.author = $$('p.xg1 a').first().text();
     item.guid = guid;
     item.id = guid;
@@ -146,7 +145,7 @@ const parsePost = ($$: CheerioAPI, item) => {
         el = $$(el);
 
         el.replaceWith(
-            art(path.join(__dirname, 'templates/description.art'), {
+            renderDescription({
                 images:
                     el.prop('zoomfile') || el.prop('file')
                         ? [
@@ -172,7 +171,7 @@ const parsePost = ($$: CheerioAPI, item) => {
 
     item.title = title;
     item.description = description;
-    item.pubDate = pubDate ? timezone(parseDate(pubDate), +8) : item.pubDate;
+    item.pubDate = pubDate ? timezone(parseDate(pubDate), 8) : item.pubDate;
     item.author = $$('a.kmxi2').first().text();
     item.guid = guid;
     item.id = guid;

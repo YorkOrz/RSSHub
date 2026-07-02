@@ -42,13 +42,8 @@ async function handler(ctx) {
         throw new ConfigNotFoundError(`This RSS is disabled unless 'ALLOW_USER_SUPPLY_UNSAFE_DOMAIN' is set to 'true'.`);
     }
 
-    const response = await got({
-        method: 'get',
-        url: currentUrl,
+    const response = await got(currentUrl, {
         responseType: 'buffer',
-        https: {
-            rejectUnauthorized: false,
-        },
     });
 
     const isGBK = /charset="?'?gb/i.test(response.data.toString());
@@ -56,7 +51,7 @@ async function handler(ctx) {
 
     const $ = load(iconv.decode(response.data, encoding));
     const author = $('meta[property="og:novel:author"]').attr('content');
-    const pubDate = timezone(parseDate($('meta[property="og:novel:update_time"]').attr('content')), +8);
+    const pubDate = timezone(parseDate($('meta[property="og:novel:update_time"]').attr('content')), 8);
 
     let items = $('dl dd a')
         .toArray()
@@ -65,11 +60,11 @@ async function handler(ctx) {
         .map((item) => {
             item = $(item);
 
-            let link = '';
+            let link: string;
             const url = item.attr('href');
             if (url.startsWith('http')) {
                 link = url;
-            } else if (/^\//.test(url)) {
+            } else if (url.startsWith('/')) {
                 link = `${rootUrl}${url}`;
             } else {
                 link = `${currentUrl}/${url}`;
@@ -86,13 +81,8 @@ async function handler(ctx) {
     items = await Promise.all(
         items.map((item) =>
             cache.tryGet(item.link, async () => {
-                const detailResponse = await got({
-                    method: 'get',
-                    url: item.link,
+                const detailResponse = await got(item.link, {
                     responseType: 'buffer',
-                    https: {
-                        rejectUnauthorized: false,
-                    },
                 });
 
                 const content = load(iconv.decode(detailResponse.data, encoding));

@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import { load } from 'cheerio';
 
 import type { Route } from '@/types';
@@ -7,8 +5,9 @@ import cache from '@/utils/cache';
 import { getSubPath } from '@/utils/common-utils';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
 import timezone from '@/utils/timezone';
+
+import { renderDescription } from './templates/description';
 
 export const route: Route = {
     path: '*',
@@ -53,15 +52,15 @@ async function handler(ctx) {
                 item.author = content('.reporter-container a')
                     .toArray()
                     .map((e) => ({ name: content(e).text() }));
-                item.pubDate = timezone(parseDate(content('.article-time .mr-2 time').text()), +8);
-                item.updated = timezone(parseDate(content('.article-time span:nth-child(2) time').text()), +8);
+                item.pubDate = timezone(parseDate(content('.article-time .mr-2 time').text()), 8);
+                item.updated = timezone(parseDate(content('.article-time span:nth-child(2) time').text()), 8);
                 item.category = content('.tag-list')
                     .first()
                     .find('.blue-tag')
                     .toArray()
                     .map((t) => content(t).text())
                     .filter((t) => t !== '...');
-                item.description = art(path.join(__dirname, 'templates/description.art'), {
+                item.description = renderDescription({
                     image: content('meta[property="og:image"]').attr('content'),
                     description: content('.post-article').html(),
                 });

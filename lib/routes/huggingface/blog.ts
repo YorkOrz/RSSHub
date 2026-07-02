@@ -18,6 +18,7 @@ interface BlogItem {
     upvotes: number;
     thumbnail: string;
     tags: string[];
+    url: string;
 }
 
 interface BlogApiResponse {
@@ -55,13 +56,13 @@ async function handler() {
 
     const lists = allBlogs.map((blog) => ({
         title: blog.title,
-        link: `https://huggingface.co/blog/${blog.slug}`,
+        link: `https://huggingface.co${blog.url}`,
         pubDate: parseDate(blog.publishedAt),
         author: blog.authorsData.map((author) => ({
             name: author.fullname || author.name,
         })),
         upvotes: blog.upvotes,
-        image: blog.thumbnail ? new URL(blog.thumbnail, 'https://huggingface.co').toString() : undefined,
+        image: blog.thumbnail ? new URL(blog.thumbnail, 'https://huggingface.co').href : undefined,
         category: blog.tags,
     }));
 

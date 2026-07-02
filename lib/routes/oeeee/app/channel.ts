@@ -1,12 +1,9 @@
-import path from 'node:path';
-
 import type { Route } from '@/types';
-import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
 import timezone from '@/utils/timezone';
 
+import { renderDescription } from '../templates/description';
 import { parseArticle } from '../utils';
 
 export const route: Route = {
@@ -26,18 +23,18 @@ async function handler(ctx) {
         .filter((i) => i.url) // Remove banner and sticky articles.
         .map((item) => ({
             title: item.title,
-            description: art(path.join(__dirname, '../templates/description.art'), {
+            description: renderDescription({
                 thumb: item.titleimg.replaceAll(/\?x-oss-process=.*/g, ''),
                 description: item.summary,
             }),
-            pubDate: timezone(parseDate(item.ptime * 1000), +8),
+            pubDate: timezone(parseDate(item.ptime * 1000), 8),
             link: item.url,
             channel: item.author,
         }));
 
     const channel = list[1] ? list[1].channel : '';
 
-    const items = await Promise.all(list.map((item) => parseArticle(item, cache.tryGet)));
+    const items = await Promise.all(list.map((item) => parseArticle(item)));
 
     return {
         title: `南方都市报客户端 - ${channel}`,

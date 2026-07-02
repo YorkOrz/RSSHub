@@ -1,13 +1,12 @@
-import path from 'node:path';
-
 import { load } from 'cheerio';
 
 import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
 import timezone from '@/utils/timezone';
+
+import { renderOutlink } from './templates/outlink';
 
 const rootUrl = 'https://lvv2.com';
 
@@ -66,7 +65,7 @@ async function handler(ctx) {
             title: $(item).find('h3 > a.title').text().trim(),
             author: $(item).find('a.author').text().trim(),
             link: new URL($(item).find('h3.title > a.title').attr('href'), rootUrl).href.replace(/(https:\/\/lvv2\.com.*?)\/title.*/, '$1'),
-            pubDate: timezone(parseDate($(item).find('a.dateline > time').attr('datetime')), +8),
+            pubDate: timezone(parseDate($(item).find('a.dateline > time').attr('datetime')), 8),
         }))
         .filter((item) => item.title !== '');
 
@@ -86,9 +85,7 @@ async function handler(ctx) {
 
                               return description;
                           })
-                        : art(path.join(__dirname, 'templates/outlink.art'), {
-                              outlink: item.link,
-                          });
+                        : renderOutlink(item.link);
 
                 return item;
             })
