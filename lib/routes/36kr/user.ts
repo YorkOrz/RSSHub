@@ -1,5 +1,4 @@
 import type { Route } from '@/types';
-import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
@@ -82,7 +81,7 @@ async function handler(ctx) {
             };
         });
 
-    items = await Promise.all(items.map((item) => ProcessItem(item, cache.tryGet)));
+    items = await Promise.all(items.map((item) => ProcessItem(item)));
 
     return {
         title: `36氪 - ${authorName}的文章`,
