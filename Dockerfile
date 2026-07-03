@@ -1,4 +1,5 @@
 FROM node:24-trixie AS dep-builder
+ENV COREPACK_NPM_REGISTRY=https://registry.npmmirror.com
 # Here we use the non-slim image to provide build-time deps (compilers and python), thus no need to install later.
 # This effectively speeds up qemu-based cross-build.
 
@@ -47,6 +48,7 @@ RUN \
 # ---------------------------------------------------------------------------------------------------------------------
 
 FROM node:24-trixie-slim AS docker-minifier
+ENV COREPACK_NPM_REGISTRY=https://registry.npmmirror.com
 # The stage is used to further reduce the image size by removing unused files.
 
 WORKDIR /minifier
