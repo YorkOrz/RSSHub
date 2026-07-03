@@ -5,9 +5,9 @@ import { parseDate } from '@/utils/parse-date';
 import { ProcessItem, rootUrl } from './utils';
 
 export const route: Route = {
-    path: '/user/:id',
+    path: '/user-custom/:id',
     categories: ['new-media'],
-    example: '/36kr/user/5652071',
+    example: '/36kr/user-custom/5652071',
     parameters: { id: '用户 ID，可从用户主页 URL 中获取' },
     features: {
         requireConfig: false,
@@ -20,7 +20,7 @@ export const route: Route = {
     radar: [
         {
             source: ['36kr.com/user/:id'],
-            target: '/user/:id',
+            target: '/user-custom/:id',
         },
     ],
     name: '用户文章',
