@@ -84,8 +84,8 @@ async function handler(ctx) {
     items = await Promise.all(items.map((item) => ProcessItem(item)));
 
     return {
-        title: `36氪 - ${authorName}的文章`,
-        link: `${rootUrl}/user/${id}`,
+        title: `[自建] 36氪 - ${authorName}的文章`,
+        link: `${rootUrl}/user/${id}?my_rss=1`,
         item: items,
     };
 }
